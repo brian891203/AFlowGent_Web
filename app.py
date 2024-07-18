@@ -1,13 +1,14 @@
 import streamlit as st
 import graphviz as gv
 
+st.balloons()
 # Sidebar content (currently empty)
 with st.sidebar:
     pass
 
 # Main page title and caption
-st.title("💬 AFlowGent")
-st.caption("🚀 Create your AI agent by work flow patterns")
+st.title(f''':rainbow[{"💬 AFlowGent"}]''')
+st.caption(f''':rainbow[{"🚀 Create your AI agent by work flow patterns"}]''')
 
 st.subheader("Workflow Diagram")
 # Define the graph using graphviz with horizontal layout

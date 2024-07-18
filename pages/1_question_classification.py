@@ -1,9 +1,10 @@
 import streamlit as st
 
+# st.balloons()
 with st.sidebar:
     st.title("Navigation")
     # page = st.radio("Go to", ["Main Page", "Question classification", "Retrievel"])
-    
+
 # Application title
 st.title("Question Classifier")
 
@@ -38,6 +39,7 @@ if st.button("Deploy settings"):
     # st.write(response)
 
     if all(value for value in data.values()):
+        st.balloons()
         st.success("Settings deployed successfully!")
     else:
         st.error("Please fill in all the fields.")
