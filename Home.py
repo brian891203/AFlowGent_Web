@@ -1,7 +1,7 @@
 import streamlit as st
 import graphviz as gv
 
-st.balloons()
+# st.balloons()
 # Sidebar content (currently empty)
 with st.sidebar:
     pass
