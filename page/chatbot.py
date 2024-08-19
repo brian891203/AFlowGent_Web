@@ -1,7 +1,9 @@
-import time
-import streamlit as st
-import requests
 import json
+import time
+
+import requests
+import streamlit as st
+
 
 def chatbot():
     """
@@ -20,7 +22,7 @@ def chatbot():
         - json
     """
 
-    st.title("ChatGPT-like clone with Azure OpenAI")
+    st.title("GPT-with Azure OpenAI")
 
     # Azure OpenAI service URL and API key
     azure_openai_url = "https://api-csd-lab-je.openai.azure.com/openai/deployments/gpt-4o/chat/completions?api-version=2024-02-15-preview"
@@ -79,4 +81,5 @@ def chatbot():
             else:
                 st.error("Failed to get response from Azure OpenAI service: " + response.json().get("error", "Unknown error"))
 
-chatbot()
+if __name__ == "__main__":
+    chatbot()

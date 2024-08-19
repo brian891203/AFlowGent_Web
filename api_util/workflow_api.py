@@ -1,15 +1,30 @@
 import requests
 
-# POST_URL = "http://localhost:8080/AflowGent/v1/workflow/{flowId}/QClassifier"
-# GET_BY_EMPID_URL = "http://localhost:8080/api/workflow/question"
-# PUT_URL = "http://localhost:8080/api/workflow/question"
+BASE_URL = "http://localhost:8080/AflowGent/v1/workflows"
 
 # Create question category
-def create_QuestionCategory(data, flowId):
-    url = f"http://localhost:8080/AflowGent/v1/workflows/{flowId}/QClassifier"
+def create_workflow(data):
+    url = BASE_URL  # Replace with your backend API URL
     response = requests.post(url, json=data)
     return response.json()
 
+def get_all_workflows():
+    response = requests.get(BASE_URL)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return []
+    
+def update_workflow(data, flowId):
+    url = BASE_URL + f"/{flowId}"
+    response = requests.put(url, json=data)
+    return response.json()
+
+def delete_workflow(flowId):
+    url = BASE_URL + f"/{flowId}"
+    response = requests.delete(url)
+    return response
+    
 # # Get question category by employee ID
 # def get_QuestionCategory(employee_id):
 #     url = GET_BY_EMPID_URL + "/" + employee_id  # Replace with your backend API URL
