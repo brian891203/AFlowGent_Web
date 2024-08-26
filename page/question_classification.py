@@ -29,9 +29,9 @@ def question_classification_page():
             st.session_state['selected_workflow'] = selected_workflow
             selected_workflowId = selected_workflow["id"]
 
-            files = st.sidebar.file_uploader(label='Upload your data',
-                                            accept_multiple_files=True,
-                                            type=['txt', 'csv', 'pdf'])
+            # files = st.sidebar.file_uploader(label='Upload your data',
+            #                                 accept_multiple_files=True,
+            #                                 type=['txt', 'csv', 'pdf'])
     
     if 'redirected' in st.session_state and not workflows:
         start.start_page()

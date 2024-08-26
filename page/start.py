@@ -52,7 +52,7 @@ def start_page():
                 }
 
                 selected_workflow_index = workflow_options.index(selected_workflow)
-                selected_workflow_id = workflows[selected_workflow_index]['id']
+                selected_workflow_id = workflows[selected_workflow_index - 1]['id']
                 response = w_api.update_workflow(data=request_body, flowId=selected_workflow_id)
                 st.write(f"Update response by {employee_id}")
 

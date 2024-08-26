@@ -2,7 +2,7 @@ import os
 
 import streamlit as st
 
-from page import Home, chatbot, question_classification, sidebar, start
+from page import LLM, Home, chatbot, question_classification, sidebar, start
 
 
 def main():
@@ -19,7 +19,7 @@ def main():
         st.session_state['page'] = 'Home Page'
 
     # 使用選擇框來改變頁面（這一部分應該放在邏輯後面，以避免覆蓋 session_state）
-    node_type = st.sidebar.selectbox("Analysis type", ['Home Page', 'Start', 'Question Classifier','Chatbot' ,'Knowledge Retrieval', 'LLM', 'Answer'])
+    node_type = st.sidebar.selectbox("Analysis type", ['Home Page', 'Start', 'Question Classifier','LLM', 'Chatbot', 'Answer'])
 
     # 檢查 node_type 是否與 session_state['page'] 不同，如果不同則更新 session_state
     if node_type != st.session_state['page']:
@@ -33,12 +33,10 @@ def main():
         start.start_page()
     elif st.session_state['page'] == 'Question Classifier':
         question_classification.question_classification_page()
-    elif st.session_state['page'] == 'Knowledge Retrieval':
-        pass
     elif st.session_state['page'] == 'Chatbot':
         chatbot.chatbot()
     elif st.session_state['page'] == 'LLM':
-        pass
+        LLM.LLM_page()
     elif st.session_state['page'] == 'Answer':
         pass
 
