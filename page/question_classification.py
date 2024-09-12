@@ -2,6 +2,7 @@ import time
 
 import streamlit as st
 
+import api_util.edge_api as edge_api
 import api_util.question_classification_api as q_api
 import api_util.workflow_api as w_api
 from page import start
@@ -86,12 +87,17 @@ def question_classification_page():
                 'description': Question_title,
                 'classes': classes_data
             }
-            st.write(q_request_body)
+            # st.write(q_request_body)
 
             response = q_api.create_QuestionCategory(q_request_body, selected_workflowId)
-            st.write(f"Update response by {employee_id}")
-            st.write(response)
-
+            if response and 'id' in response:
+                st.write(f"Question Classifier Node created successfully by {employee_id}. Node ID: {response['id']}")
+                st.write(response)
+                st.session_state["SourceNodeId"] = response['id']
+            else:
+                st.error("Failed to create Question Classifier Node.")
+                return
+            
             w_request_body = {
                 'updatedBy': employee_id
             }
@@ -99,3 +105,30 @@ def question_classification_page():
 
         else:
             st.error("Please fill in all the fields.")
+
+    # Get all node information by workflow ID
+    st.header("Create Edges")
+    nodes_info = w_api.get_all_node_info_by_workflow_id(selected_workflowId)
+    if nodes_info:
+        # Prepare the select box options
+        node_options = [
+            f"{node['type']} - {node['description']} (ID: {node['id']})"
+            for node in nodes_info
+        ]
+        selected_node = st.selectbox("Select Target Node", node_options)
+
+        selected_target_node_id = selected_node.split("(ID: ")[1].rstrip(")")
+
+        # Create Edge Button
+        if st.button("Create Edge"):
+            if 'SourceNodeId' in st.session_state:
+                edge_payload = {
+                    "sourceNodeId": st.session_state["SourceNodeId"],
+                    "targetNodeId": selected_target_node_id
+                }
+                edge_response = edge_api.create_edge(flowId=selected_workflowId, data=edge_payload)
+                st.write("Edge created:", edge_response)
+            else:
+                st.error("Source Node ID not found.")
+    else:
+        st.error("No nodes found for the selected workflow.")

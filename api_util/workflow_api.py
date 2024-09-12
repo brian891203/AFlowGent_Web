@@ -24,6 +24,22 @@ def delete_workflow(flowId):
     url = BASE_URL + f"/{flowId}"
     response = requests.delete(url)
     return response
+
+def get_all_node_ids_by_workflow_id(workflow_id):
+    url = f"{BASE_URL}/{workflow_id}/nodes/ids"
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return []
+    
+def get_all_node_info_by_workflow_id(workflow_id):
+    url = f"{BASE_URL}/{workflow_id}/nodes/info"
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return []
     
 # # Get question category by employee ID
 # def get_QuestionCategory(employee_id):

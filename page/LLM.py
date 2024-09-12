@@ -3,6 +3,7 @@ import time
 
 import streamlit as st
 
+import api_util.edge_api as edge_api
 import api_util.llm_api as llm_api
 import api_util.question_classification_api as q_api
 import api_util.workflow_api as w_api
@@ -29,10 +30,6 @@ def LLM_page():
 
             st.session_state['selected_workflow'] = selected_workflow
             selected_workflowId = selected_workflow["id"]
-
-            # files = st.sidebar.file_uploader(label='Upload your data',
-            #                                 accept_multiple_files=True,
-            #                                 type=['txt', 'csv', 'pdf'])
     
     if 'redirected' in st.session_state and not workflows:
         start.start_page()
@@ -48,6 +45,9 @@ def LLM_page():
 
     node_description = st.text_input("Input your LLM settings description", value="")
 
+    #System prompt
+    system_prompt = st.text_input("Input your LLM System prompt", value="")
+    
     upload_embedding_files = st.file_uploader(
         label='Upload your data',
         accept_multiple_files=True,
@@ -59,7 +59,8 @@ def LLM_page():
         
         payload = {
                 "modelConfig": {"model": model},
-                "description": node_description
+                "description": node_description,
+                "promptTemplate": {"systemPrompt": system_prompt}
             }
 
         files = {
@@ -69,10 +70,42 @@ def LLM_page():
 
         # Send the request (assuming w_api.create_llm_node exists)
         response = llm_api.create_llm(flowId=selected_workflowId, files=files)
-        st.write(f"Update response by {employee_id}")
-        st.write(response)
+        if response and 'id' in response:
+            st.write(f"LLM Node created successfully by {employee_id}. Node ID: {response['id']}")
+            st.write(response)
+            st.session_state["SourceNodeId"] = response['id']
+        else:
+            st.error("Failed to create LLM Node.")
+            return
 
         w_request_body = {
                 'updatedBy': employee_id
             }
         w_api.update_workflow(w_request_body, selected_workflowId)
+
+    # Get all node information by workflow ID
+    st.header("Create Edges")
+    nodes_info = w_api.get_all_node_info_by_workflow_id(selected_workflowId)
+    if nodes_info:
+        # Prepare the select box options
+        node_options = [
+            f"{node['type']} - {node['description']} (ID: {node['id']})"
+            for node in nodes_info
+        ]
+        selected_node = st.selectbox("Select Target Node", node_options)
+
+        selected_target_node_id = selected_node.split("(ID: ")[1].rstrip(")")
+
+        # Create Edge Button
+        if st.button("Create Edge"):
+            if 'SourceNodeId' in st.session_state:
+                edge_payload = {
+                    "sourceNodeId": st.session_state["SourceNodeId"],
+                    "targetNodeId": selected_target_node_id
+                }
+                edge_response = edge_api.create_edge(flowId=selected_workflowId, data=edge_payload)
+                st.write("Edge created:", edge_response)
+            else:
+                st.error("Source Node ID not found.")
+    else:
+        st.error("No nodes found for the selected workflow.")
